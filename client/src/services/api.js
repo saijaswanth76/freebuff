@@ -59,6 +59,22 @@ api.interceptors.response.use(
   }
 );
 
+/**
+ * Resolves a relative image path (e.g. "/uploads/abc.jpg") to the backend origin.
+ *
+ * The backend stores imageUrl as a root-relative path, which would resolve
+ * against the static host (Vercel) in production and 404. When
+ * VITE_API_BASE_URL is set we prefix it so images load from the API origin.
+ * Absolute http(s) URLs and empty values are returned unchanged, and in local
+ * dev (empty base URL) the Vite proxy serves /uploads, so it stays relative.
+ */
+export const resolveImageUrl = (url) => {
+  if (!url) return '';
+  if (/^https?:\/\//i.test(url)) return url;
+  if (!baseURL) return url; // local dev: proxy handles /uploads
+  return url.startsWith('/') ? `${baseURL}${url}` : `${baseURL}/${url}`;
+};
+
 /** Extracts a readable message (and optional field details) from an error. */
 export const getApiErrorMessage = (error, fallback = 'Something went wrong. Please try again.') => {
   const data = error?.response?.data;

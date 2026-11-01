@@ -14,7 +14,7 @@ import {
   Handshake,
   Info,
 } from 'lucide-react';
-import { donationsAPI, ngoAPI, getApiErrorMessage } from '../services/api';
+import { donationsAPI, ngoAPI, getApiErrorMessage, resolveImageUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { LoadingBlock, ErrorNotice } from '../components/ui';
@@ -145,7 +145,7 @@ export default function DonationDetail() {
 
           {donation.imageUrl ? (
             <img
-              src={donation.imageUrl}
+              src={resolveImageUrl(donation.imageUrl)}
               alt={donation.foodName}
               className="mt-4 rounded-xl w-full max-h-72 object-cover border border-line"
             />

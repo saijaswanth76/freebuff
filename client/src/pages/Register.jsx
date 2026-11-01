@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { statsAPI, getApiErrorMessage } from '../services/api';
 import { Spinner } from '../components/ui';
 import { ROLE_LABELS } from '../utils/format';
+import { FALLBACK_DONOR_CATEGORIES, FALLBACK_FOOD_CATEGORIES, mergeMeta } from '../utils/metaFallbacks';
 
 const ROLE_OPTIONS = [
   { value: 'DONOR', label: 'Food Donor', icon: HandHeart, text: 'I have surplus food to give' },
@@ -25,7 +26,7 @@ export default function Register() {
 
   const initialRole = ['DONOR', 'NGO', 'VOLUNTEER'].includes(params.get('role')) ? params.get('role') : 'DONOR';
 
-  const [meta, setMeta] = useState({ donorCategories: [], foodCategories: [] });
+  const [meta, setMeta] = useState({ donorCategories: FALLBACK_DONOR_CATEGORIES, foodCategories: FALLBACK_FOOD_CATEGORIES });
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -46,7 +47,20 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    statsAPI.meta().then((res) => setMeta(res.data)).catch(() => {});
+    let mounted = true;
+    statsAPI
+      .meta()
+      .then((res) => {
+        if (!mounted) return;
+        // Merge over the fallbacks so a partial response can't blank the form.
+        setMeta((prev) => mergeMeta(prev, res.data));
+      })
+      .catch(() => {
+        /* keep the static fallbacks */
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // Already signed in? Go straight to the dashboard.

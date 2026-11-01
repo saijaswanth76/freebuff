@@ -4,6 +4,7 @@ import DonationCard from '../components/DonationCard';
 import Pagination from '../components/Pagination';
 import { LoadingBlock, EmptyState, ErrorNotice } from '../components/ui';
 import { donationsAPI, statsAPI, getApiErrorMessage } from '../services/api';
+import { FALLBACK_FOOD_CATEGORIES, mergeMeta } from '../utils/metaFallbacks';
 
 const SORT_OPTIONS = [
   { value: 'deadline', label: 'Earliest deadline' },
@@ -20,7 +21,7 @@ export default function AvailableDonations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [meta, setMeta] = useState({ foodCategories: [], units: [] });
+  const [meta, setMeta] = useState({ foodCategories: FALLBACK_FOOD_CATEGORIES });
 
   const [filters, setFilters] = useState({
     search: '',
@@ -33,7 +34,12 @@ export default function AvailableDonations() {
   const [searchDraft, setSearchDraft] = useState('');
 
   useEffect(() => {
-    statsAPI.meta().then((res) => setMeta(res.data)).catch(() => {});
+    statsAPI
+      .meta()
+      .then((res) => setMeta((prev) => mergeMeta(prev, res.data)))
+      .catch(() => {
+        /* keep the static fallbacks */
+      });
   }, []);
 
   useEffect(() => {

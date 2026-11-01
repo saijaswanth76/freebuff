@@ -5,6 +5,7 @@ import StatusBadge from '../../components/StatusBadge';
 import Pagination from '../../components/Pagination';
 import { LoadingBlock, EmptyState, ErrorNotice } from '../../components/ui';
 import { adminAPI, statsAPI, getApiErrorMessage } from '../../services/api';
+import { FALLBACK_FOOD_CATEGORIES, mergeMeta } from '../../utils/metaFallbacks';
 import { formatDateTime, formatDate } from '../../utils/format';
 
 const STATUS_OPTIONS = [
@@ -26,7 +27,7 @@ export default function AdminDonations() {
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 15 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [meta, setMeta] = useState({ foodCategories: [] });
+  const [meta, setMeta] = useState({ foodCategories: FALLBACK_FOOD_CATEGORIES });
 
   const [searchDraft, setSearchDraft] = useState('');
   const [filters, setFilters] = useState({
@@ -41,7 +42,12 @@ export default function AdminDonations() {
   });
 
   useEffect(() => {
-    statsAPI.meta().then((res) => setMeta(res.data)).catch(() => {});
+    statsAPI
+      .meta()
+      .then((res) => setMeta((prev) => mergeMeta(prev, res.data)))
+      .catch(() => {
+        /* keep the static fallbacks */
+      });
   }, []);
 
   useEffect(() => {

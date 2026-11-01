@@ -6,6 +6,11 @@ import { useToast } from '../../context/ToastContext';
 import { donationsAPI, statsAPI, getApiErrorMessage } from '../../services/api';
 import { Spinner } from '../../components/ui';
 import {
+  FALLBACK_FOOD_CATEGORIES,
+  FALLBACK_UNITS,
+  mergeMeta,
+} from '../../utils/metaFallbacks';
+import {
   EMPTY_DONATION,
   FoodSafetyNotice,
   DonationFields,
@@ -19,7 +24,10 @@ export default function AddDonation() {
   const toast = useToast();
   const fileRef = useRef(null);
 
-  const [meta, setMeta] = useState({ foodCategories: [], units: [] });
+  const [meta, setMeta] = useState({
+    foodCategories: FALLBACK_FOOD_CATEGORIES,
+    units: FALLBACK_UNITS,
+  });
   const [form, setForm] = useState({
     ...EMPTY_DONATION,
     city: user?.city || '',
@@ -34,7 +42,12 @@ export default function AddDonation() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    statsAPI.meta().then((res) => setMeta(res.data)).catch(() => {});
+    statsAPI
+      .meta()
+      .then((res) => setMeta((prev) => mergeMeta(prev, res.data)))
+      .catch(() => {
+        /* keep the static fallbacks */
+      });
   }, []);
 
   useEffect(() => () => {

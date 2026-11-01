@@ -6,6 +6,7 @@ import Pagination from '../../components/Pagination';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { LoadingBlock, EmptyState, ErrorNotice } from '../../components/ui';
 import { ngoAPI, statsAPI, getApiErrorMessage } from '../../services/api';
+import { FALLBACK_FOOD_CATEGORIES, mergeMeta } from '../../utils/metaFallbacks';
 import { useToast } from '../../context/ToastContext';
 
 const SORT_OPTIONS = [
@@ -24,7 +25,7 @@ export default function NgoBrowse() {
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 9 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [meta, setMeta] = useState({ foodCategories: [] });
+  const [meta, setMeta] = useState({ foodCategories: FALLBACK_FOOD_CATEGORIES });
 
   const [searchDraft, setSearchDraft] = useState('');
   const [filters, setFilters] = useState({ search: '', category: '', city: '', sort: 'deadline', page: 1 });
@@ -32,7 +33,12 @@ export default function NgoBrowse() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    statsAPI.meta().then((res) => setMeta(res.data)).catch(() => {});
+    statsAPI
+      .meta()
+      .then((res) => setMeta((prev) => mergeMeta(prev, res.data)))
+      .catch(() => {
+        /* keep the static fallbacks */
+      });
   }, []);
 
   useEffect(() => {
