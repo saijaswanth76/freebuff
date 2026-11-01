@@ -4,13 +4,16 @@ import axios from 'axios';
  * Centralised API configuration.
  *
  * - `withCredentials` sends the httpOnly session cookie on every request.
- * - The base URL comes from VITE_API_BASE_URL (see client/.env.example).
- *   When it is empty the Vite dev proxy forwards /api to http://localhost:5000.
+ * - The base URL comes from VITE_API_BASE_URL (see client/.env.example), and
+ *   defaults to the deployed API. When it is empty the Vite dev proxy forwards
+ *   /api to http://localhost:5000.
  * - A token returned by the login endpoint is kept IN MEMORY ONLY (never
  *   localStorage) and sent as an Authorization header. The cookie is the
  *   primary mechanism; the header exists so API tools / refresh-free setups work.
  */
-const baseURL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const baseURL = (
+  import.meta.env.VITE_API_BASE_URL ?? 'https://food-donation-34al.onrender.com'
+).replace(/\/$/, '');
 
 export const api = axios.create({
   baseURL,
