@@ -294,10 +294,6 @@ export default function Register() {
           </p>
         </div>
 
-        <p className="text-xs text-center text-slate-400 mt-4">
-          Administrator accounts are not part of the registration form. They are created securely with the
-          documented <code>npm run create-admin</code> script.
-        </p>
       </div>
     </div>
   );
