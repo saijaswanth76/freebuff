@@ -75,10 +75,8 @@ const requireActiveNgo = (req, res, next) => {
   if (ngo.verificationStatus === 'REJECTED') {
     return next(ApiError.forbidden('Your NGO registration was rejected. Contact the administrator.'));
   }
-  const mustBeVerified = String(process.env.NGO_REQUIRE_VERIFICATION || 'false').toLowerCase() === 'true';
-  if (mustBeVerified && ngo.verificationStatus !== 'VERIFIED') {
-    return next(ApiError.forbidden('Your NGO account is pending administrator verification.'));
-  }
+  // PENDING NGOs may browse and accept donations while awaiting administrator
+  // verification — the message on the registration page describes exactly this.
   next();
 };
 

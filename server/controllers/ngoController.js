@@ -350,6 +350,12 @@ const dashboard = asyncHandler(async (req, res) => {
       byStatus,
     },
     recentActivities: recent,
+    ngo: {
+      _id: req.user._id,
+      name: req.user.name,
+      organizationName: req.user.organizationName,
+      verificationStatus: req.user.verificationStatus,
+    },
   });
 });
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Handshake, Bike, PackageCheck, ArrowRight } from 'lucide-react';
+import { Search, Handshake, Bike, PackageCheck, ArrowRight, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import StatCard from '../../components/StatCard';
 import StatusBadge from '../../components/StatusBadge';
 import { LoadingBlock, ErrorNotice, EmptyState } from '../../components/ui';
@@ -34,9 +34,32 @@ export default function NgoDashboard() {
   if (error) return <ErrorNotice message={error} onRetry={load} />;
 
   const stats = data.stats;
+  const verificationStatus = data.ngo?.verificationStatus;
 
   return (
     <div className="space-y-6">
+      {verificationStatus === 'PENDING' ? (
+        <div className="alert alert-warning flex gap-3" role="note">
+          <ShieldAlert size={20} className="shrink-0 mt-0.5" />
+          <div>
+            <p className="m-0 font-semibold text-slate-900">Your NGO registration is awaiting administrator verification</p>
+            <p className="m-0 text-sm text-slate-600 mt-1">
+              You can already browse available donations and accept them while your account is reviewed.
+              Once an administrator verifies your organization, you will have full access to coordinate pickup
+              and distribution. Check back here for the update.
+            </p>
+          </div>
+        </div>
+      ) : verificationStatus === 'VERIFIED' ? (
+        <div className="alert alert-success flex gap-3" role="note">
+          <CheckCircle2 size={20} className="shrink-0 mt-0.5" />
+          <p className="m-0 text-sm">
+            <strong className="text-slate-900">Your organization is verified.</strong> You have full access to
+            coordinate pickup and distribution for the donations you accept.
+          </p>
+        </div>
+      ) : null}
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Search} label="Available donations" value={stats.availableDonations} tone="blue" hint="Open for acceptance" />
         <StatCard icon={Handshake} label="Accepted by us" value={stats.acceptedDonations} tone="green" />

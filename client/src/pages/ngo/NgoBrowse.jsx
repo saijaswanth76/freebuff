@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, SlidersHorizontal, Handshake, UtensilsCrossed } from 'lucide-react';
+import { Search, SlidersHorizontal, Handshake, UtensilsCrossed, ShieldAlert } from 'lucide-react';
 import DonationCard from '../../components/DonationCard';
 import Pagination from '../../components/Pagination';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -26,6 +26,7 @@ export default function NgoBrowse() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [meta, setMeta] = useState({ foodCategories: FALLBACK_FOOD_CATEGORIES });
+  const [verificationStatus, setVerificationStatus] = useState('');
 
   const [searchDraft, setSearchDraft] = useState('');
   const [filters, setFilters] = useState({ search: '', category: '', city: '', sort: 'deadline', page: 1 });
@@ -39,6 +40,10 @@ export default function NgoBrowse() {
       .catch(() => {
         /* keep the static fallbacks */
       });
+    ngoAPI
+      .dashboard()
+      .then((res) => setVerificationStatus(res.data.ngo?.verificationStatus ?? ''))
+      .catch(() => setVerificationStatus(''));
   }, []);
 
   useEffect(() => {
@@ -90,6 +95,19 @@ export default function NgoBrowse() {
 
   return (
     <div className="space-y-5">
+      {verificationStatus === 'PENDING' ? (
+        <div className="alert alert-warning flex gap-3" role="note">
+          <ShieldAlert size={20} className="shrink-0 mt-0.5" />
+          <div>
+            <p className="m-0 font-semibold text-slate-900">Your NGO registration is awaiting administrator verification</p>
+            <p className="m-0 text-sm text-slate-600 mt-1">
+              You can browse and accept donations in the meantime. Your account will be fully activated once an
+              administrator reviews your organization.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       <div>
         <h2 className="text-xl font-extrabold text-slate-900 m-0">Browse available donations</h2>
         <p className="text-sm text-slate-500 m-0">
