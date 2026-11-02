@@ -289,12 +289,11 @@ export default function Home() {
       {/* -------------------------- Community / CTA ------------------------- */}
       <section className="section">
         <div className="shell">
-          <div className="card p-8 md:p-10 text-center bg-gradient-to-br from-primary to-primary-dark border-0 text-white">
+          <div className="card p-8 md:p-10 text-center border-0 text-white" style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))' }}>
             <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/15 mb-4">
               <HeartHandshake size={28} />
-            </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold m-0">Join the food-sharing community</h2>
-            <p className="text-white/85 max-w-2xl mx-auto mt-3 leading-relaxed">
+            </span>              <h2 className="text-2xl md:text-3xl font-extrabold m-0 text-white drop-shadow-sm">Join the food-sharing community</h2>
+            <p className="text-white/95 max-w-2xl mx-auto mt-3 leading-relaxed drop-shadow-sm">
               Whether you have surplus food to give, an organisation that distributes it, or an hour to
               lend as a volunteer — your participation keeps edible food out of bins and on plates.
             </p>
