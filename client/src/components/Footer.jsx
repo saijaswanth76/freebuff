@@ -70,10 +70,10 @@ export default function Footer() {
               <Mail size={15} className="text-primary" /> support@foodshare.community
             </li>
             <li className="flex items-center gap-2">
-              <Phone size={15} className="text-primary" /> +91 90000 00000
+              <Phone size={15} className="text-primary" /> +91 9848016636
             </li>
             <li className="flex items-center gap-2">
-              <MapPin size={15} className="text-primary" /> Community Service Project, Dept. of CSE
+              <MapPin size={15} className="text-primary" /> Food donation community Benz Circle,Vijayawada.
             </li>
           </ul>
         </div>
@@ -82,7 +82,7 @@ export default function Footer() {
       <div className="border-t border-line">
         <div className="shell py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
           <p className="m-0">
-            © {new Date().getFullYear()} FoodShare Community · B.Tech CSE Community Service Project
+            © {new Date().getFullYear()} FoodShare Community
           </p>
           <p className="m-0">Aligned with SDG 2 · SDG 11 · SDG 12</p>
         </div>
