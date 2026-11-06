@@ -78,6 +78,16 @@ app.use('/uploads', express.static(UPLOAD_DIR, { dotfiles: 'deny', maxAge: '1d',
 /* -------------------------------- API --------------------------------- */
 app.use('/api', require('./routes'));
 
+// Serve the built React frontend for every non-API route so client-side
+// routing (React Router) handles page refreshes and direct URLs like
+// /donor, /ngo, /volunteer, /admin instead of hitting the 404 handler.
+const path = require('path');
+const FRONTEND_DIST = path.resolve(__dirname, '..', 'client', 'dist');
+app.use(express.static(FRONTEND_DIST, { index: 'index.html', maxAge: '1h' }));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
+});
+
 /* --------------------------- Error handling --------------------------- */
 app.use(notFound);
 app.use(errorHandler);

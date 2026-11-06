@@ -12,8 +12,10 @@ import axios from 'axios';
  *   primary mechanism; the header exists so API tools / refresh-free setups work.
  */
 const baseURL = (
-  import.meta.env.VITE_API_BASE_URL ?? 'https://food-donation-34al.onrender.com'
-).replace(/\/$/, '');
+  import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim() !== ''
+    ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
+    : ''
+);
 
 export const api = axios.create({
   baseURL,
