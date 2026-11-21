@@ -92,12 +92,14 @@ export default function Home() {
       {/* ------------------------------- Hero ------------------------------- */}
       <section className="relative overflow-hidden bg-white">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-soft via-white to-accent-soft" aria-hidden="true" />
+        <div className="hero-blob w-72 h-72 -top-16 -left-16 bg-orange-300" aria-hidden="true" />
+        <div className="hero-blob w-80 h-80 -bottom-24 right-0 bg-sky-200" aria-hidden="true" />
         <div className="shell relative py-16 md:py-24 grid gap-10 lg:grid-cols-2 items-center">
-          <div>
+          <div className="fade-up">
             <span className="eyebrow">Community Food Donation &amp; Distribution System</span>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight mt-3">
               Share Food. Reduce Waste.{' '}
-              <span className="text-primary-dark">Feed Communities.</span>
+              <span className="gradient-text">Feed Communities.</span>
             </h1>
             <p className="text-slate-600 text-lg leading-relaxed mt-5 max-w-xl">
               Every day, edible surplus food is thrown away while people nearby go hungry. This platform
@@ -121,7 +123,7 @@ export default function Home() {
           </div>
 
           {/* Workflow preview card (decorative process diagram, not statistics) */}
-          <div className="card p-5 md:p-6">
+          <div className="card card-hover p-5 md:p-6 animate-float">
             <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Donation journey</p>
             <ol className="list-none p-0 m-0 space-y-3">
               {[
@@ -289,7 +291,8 @@ export default function Home() {
       {/* -------------------------- Community / CTA ------------------------- */}
       <section className="section">
         <div className="shell">
-          <div className="card p-8 md:p-10 text-center border-0 text-white" style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))' }}>
+          <div className="card p-8 md:p-10 text-center border-0 text-white overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #fb923c 0%, var(--color-primary) 45%, var(--color-primary-dark) 100%)' }}>
+            <span className="hero-blob w-56 h-56 -top-20 -right-10 bg-white/40" aria-hidden="true" />
             <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/15 mb-4">
               <HeartHandshake size={28} />
             </span>              <h2 className="text-2xl md:text-3xl font-extrabold m-0 text-white drop-shadow-sm">Join the food-sharing community</h2>

@@ -82,11 +82,17 @@ app.use('/api', require('./routes'));
 // routing (React Router) handles page refreshes and direct URLs like
 // /donor, /ngo, /volunteer, /admin instead of hitting the 404 handler.
 const path = require('path');
+const fs = require('fs');
 const FRONTEND_DIST = path.resolve(__dirname, '..', 'client', 'dist');
-app.use(express.static(FRONTEND_DIST, { index: 'index.html', maxAge: '1h' }));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
-});
+const FRONTEND_INDEX = path.join(FRONTEND_DIST, 'index.html');
+// The build folder is git-ignored, so the API-only deployment may not have it.
+// Only register the SPA fallback when a build actually exists.
+if (fs.existsSync(FRONTEND_INDEX)) {
+  app.use(express.static(FRONTEND_DIST, { index: 'index.html', maxAge: '1h' }));
+  app.get('*', (req, res) => {
+    res.sendFile(FRONTEND_INDEX);
+  });
+}
 
 /* --------------------------- Error handling --------------------------- */
 app.use(notFound);

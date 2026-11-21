@@ -78,7 +78,8 @@ const login = asyncHandler(async (req, res) => {
 
 /** POST /api/auth/logout */
 const logout = asyncHandler(async (req, res) => {
-  res.clearCookie(COOKIE_NAME, { path: '/' });
+  const { maxAge, ...options } = cookieOptions();
+  res.clearCookie(COOKIE_NAME, options);
   return ok(res, null, 'Logged out successfully');
 });
 

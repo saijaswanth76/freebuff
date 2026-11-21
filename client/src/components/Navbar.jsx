@@ -27,14 +27,17 @@ export default function Navbar() {
 
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-lg text-sm font-semibold no-underline transition ${
-      isActive ? 'text-primary-dark bg-primary-soft' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+      isActive
+        ? 'text-primary-dark bg-primary-soft shadow-[inset_0_-2px_0_0_var(--color-primary)]'
+        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
     }`;
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-line">
       <div className="shell h-16 flex items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2 no-underline" onClick={() => setOpen(false)}>
-          <span className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center">
+        <Link to="/" className="flex items-center gap-2 no-underline group" onClick={() => setOpen(false)}>
+          <span className="w-9 h-9 rounded-xl text-white flex items-center justify-center shadow-lg shadow-orange-500/30 transition group-hover:scale-105"
+            style={{ backgroundImage: 'linear-gradient(135deg, #fb923c, #ea580c 60%, #c2410c)' }}>
             <Leaf size={19} />
           </span>
           <span className="leading-tight">

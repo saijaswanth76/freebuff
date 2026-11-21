@@ -11,11 +11,20 @@ import axios from 'axios';
  *   localStorage) and sent as an Authorization header. The cookie is the
  *   primary mechanism; the header exists so API tools / refresh-free setups work.
  */
-const baseURL = (
-  import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim() !== ''
-    ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
-    : ''
-);
+const RAW_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
+
+/*
+ * The deployed frontend (Vercel) and the local dev server both proxy /api to
+ * the Express API (see vercel.json / vite.config.js), so requests made with a
+ * relative base URL stay first-party. That is what keeps the session cookie
+ * working after a page refresh - a cross-origin base URL makes the cookie a
+ * third-party cookie, which browsers block.
+ *
+ * Older .env files still contain the Render URL; treat it as "proxied" so it
+ * does not break the session. Any other value is honoured as-is.
+ */
+const PROXIED_API_ORIGINS = [/^https?:\/\/food-donation-34al\.onrender\.com$/i];
+const baseURL = PROXIED_API_ORIGINS.some((re) => re.test(RAW_BASE_URL)) ? '' : RAW_BASE_URL;
 
 export const api = axios.create({
   baseURL,
@@ -32,9 +41,29 @@ const withPayload = (data) =>
     ? { data, headers: { 'Content-Type': 'multipart/form-data' } }
     : { data };
 
-let authToken = null;
+/**
+ * The session token is kept in sessionStorage (not localStorage) so a page
+ * refresh restores the logged-in user even if the browser refuses to send the
+ * httpOnly cookie. The API accepts it as a Bearer token.
+ */
+const TOKEN_KEY = 'cfds_auth_token';
+const readStoredToken = () => {
+  try {
+    return window.sessionStorage.getItem(TOKEN_KEY) || null;
+  } catch {
+    return null;
+  }
+};
+
+let authToken = readStoredToken();
 export const setAuthToken = (token) => {
   authToken = token || null;
+  try {
+    if (authToken) window.sessionStorage.setItem(TOKEN_KEY, authToken);
+    else window.sessionStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* storage unavailable (private mode) - cookie auth still applies */
+  }
 };
 export const getAuthToken = () => authToken;
 
@@ -57,7 +86,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const isLoginAttempt = /\/api\/auth\/(login|register|me)/.test(error.config?.url || '');
     if (status === 401 && !isLoginAttempt) {
-      authToken = null;
+      setAuthToken(null);
       window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
     }
     return Promise.reject(error);

@@ -22,13 +22,15 @@ const verifyToken = (token) => jwt.verify(token, getJwtSecret());
 /**
  * Cookie options.
  * - httpOnly: JavaScript cannot read the token (XSS protection)
- * - sameSite=lax: sent on normal navigations, blocked on cross-site POSTs
+ * - sameSite: 'lax' by default (the frontend proxies /api, so the cookie is
+ *   first-party). Set JWT_COOKIE_SAME_SITE=none when a frontend on another
+ *   origin calls the API directly with credentials.
  * - secure: only over HTTPS (enabled automatically in production)
  */
 const cookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  sameSite: process.env.JWT_COOKIE_SAME_SITE || 'lax',
   maxAge: 24 * 60 * 60 * 1000, // 1 day, mirrors JWT_EXPIRES_IN default
   path: '/',
 });
